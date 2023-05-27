@@ -23,6 +23,8 @@ import Turma from './components/Turma';
 import CadastroAlunos from './components/CadastroAlunos';
 import CadastroBeneficios from './components/CadastroBeneficios';
 
+import PibxCo2 from './components/PibxCo2';
+
 
 
 ReactDOM.render(
@@ -33,6 +35,7 @@ ReactDOM.render(
       <Route path="/aula" element={<Aula />}></Route>
       <Route path="/area-do-usuario" element={<AreaDoUsuario/>}></Route>
       <Route path="/cadastro-alunos" element={<CadastroAlunos />}></Route>
+      <Route path="/pib-x-co2" element={<PibxCo2 />}></Route>
       <Route path="/cadastro-beneficios" element={<CadastroBeneficios />}></Route>
       <Route path="/calendario-aulas" element={<CalendarioAulas />}></Route>
       <Route path="/lista-aulas" element={<ListaAulas />}></Route>

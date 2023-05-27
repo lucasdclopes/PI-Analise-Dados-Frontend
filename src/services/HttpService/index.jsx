@@ -78,6 +78,32 @@ export default class HttpService{
     let response = await axios.get(url,defaultConfig);
     return response;
   }
+
+  static calcularPibCo2Paises = async (filtros) => {
+    console.log('filtros calcularPibCo2Paises',filtros);
+    let url = urlBase + '/pib/calc-co2';
+    let queryParams = [];
+
+    if (filtros.idPaises) {
+      filtros.idPaises.forEach((idPais) => {
+        queryParams.push('idPais=' + idPais);
+      })
+    }
+
+    if (filtros.minAno) {
+      queryParams.push('minAno=' + filtros.minAno);
+    }
+    if (filtros.maxAno) {
+      queryParams.push('maxAno=' + filtros.maxAno);
+    }
+
+    url += HttpService.gerarParams(queryParams);
+
+    console.log("url calcularPibCo2Paises ",url);
+
+    let response = await axios.get(url,defaultConfig);
+    return response;
+  }
   
   static listarCalendarioAulas = async (filtros) => {
     let url = urlBase + '/calendario-aulas';
