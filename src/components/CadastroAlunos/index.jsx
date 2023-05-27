@@ -9,8 +9,11 @@ import MenuLogado from '../MenuLogado';
 import Paginacao from '../Paginacao';
 import { Modal } from 'react-bootstrap';
 
+import { default as ReactSelect } from "react-select";
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, Title, CategoryScale, Legend } from 'chart.js';
+import { components } from "react-select";
+
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Legend, Title);
 
@@ -28,6 +31,28 @@ export const options = {
   },
 };
 
+const Option = (props) => {
+  return (
+    <div>
+      <components.Option {...props}>
+        <input
+          type="checkbox"
+          checked={props.isSelected}
+          onChange={() => null}
+        />{" "}
+        <label>{props.label}</label>
+      </components.Option>
+    </div>
+  );
+};
+
+const styles = {
+  container: base => ({
+    ...base,
+    flex: 1
+  })
+};
+
 
 export default class CadastroAlunos extends Component{
 
@@ -36,6 +61,8 @@ export default class CadastroAlunos extends Component{
 
     this.state = {
       data: null,
+      paisesSelecionados: null,
+      dadosPaisesSelect:[],
       dadosPaises: [],
       dadosGrafico: [],
       filtros : {
@@ -153,6 +180,7 @@ export default class CadastroAlunos extends Component{
           this.setState(prevState => ({
             ...prevState,
             dadosPaises : response.data,
+            dadosPaisesSelect : response.data.map((el) => { return {value:el.idPais, label:el.nomePais} } ),
             filtros : {
               ...prevState.filtros
             }
@@ -183,6 +211,7 @@ export default class CadastroAlunos extends Component{
 
       let textoParaBusca = this.state.textoBusca;
       let minAnoBusca = this.state.minAnoBusca;
+      let maxAnoBusca = this.state.maxAnoBusca;
 
       this.setState(prevState => ({
         ...prevState,
@@ -205,8 +234,9 @@ export default class CadastroAlunos extends Component{
         },
         filtros : {
           ...prevState.filtros,
-          idPaises : textoParaBusca ? textoParaBusca.split(','):null,
+          idPaises : this.state.paisesSelecionados ? this.state.paisesSelecionados.map((el) => el.value) : null,
           minAno : minAnoBusca ? minAnoBusca:null,
+          maxAno : maxAnoBusca ? maxAnoBusca:null,
           paginacaoRequest : {
             ...prevState.filtros.paginacaoRequest,
             page: 1
@@ -215,6 +245,15 @@ export default class CadastroAlunos extends Component{
         }
       ),() => {this.obterLista();}
       );
+    }
+
+    this.handleChangeCheckedSelect = (e) => {
+      console.log(e);
+      console.log('idPaises',this.state.filtros.idPaises);
+      this.setState(prevState => ({
+        ...prevState,
+        paisesSelecionados : e
+      }));
     }
 
     this.handleChange = (e) => {
@@ -282,34 +321,51 @@ export default class CadastroAlunos extends Component{
 
           <Col style={{marginTop : "60px"}} xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
           <Row>
-          <Col style={{marginTop : "60px"}}>
-            <h6>Busque pelo código dos países </h6>
-            <InputGroup >
-              <FormControl 
-                placeholder="Exemplo: 1, 4, 50"
-                aria-label="Buscar por país"
-                aria-describedby="Buscar"
-                name = "textoBusca"
-                value = {this.textoBusca}
-                onChange={this.handleChange} 
-              />
-            </InputGroup>
-          </Col>
-          </Row>
-          <Row>
-          <Col style={{marginTop : "20px"}}>
-          <h6>Busque pelo ano mínimo de corte </h6>
-            <InputGroup >
-              <FormControl 
-                placeholder="Exemplo: 1990"
-                aria-label="Ano mínimo"
-                aria-describedby="Buscar"
-                name = "minAnoBusca"
-                value = {this.minAnoBusca}
-                onChange={this.handleChange} 
-              />
-            </InputGroup>
-          </Col>
+            <Col style={{marginTop : "20px"}} >
+            <h6>Busque pelo ano mínimo de corte </h6>
+              <InputGroup >
+                <FormControl 
+                  placeholder="Exemplo: 1990"
+                  aria-label="Ano mínimo"
+                  aria-describedby="Buscar"
+                  name = "minAnoBusca"
+                  value = {this.minAnoBusca}
+                  onChange={this.handleChange} 
+                />
+              </InputGroup>
+            </Col>
+            <Col style={{marginTop : "20px"}} >
+            <h6>Busque por um ano máximo </h6>
+              <InputGroup >
+                <FormControl 
+                  placeholder="Exemplo: 2020"
+                  aria-label="Ano máximo"
+                  aria-describedby="Buscar"
+                  name = "maxAnoBusca"
+                  value = {this.maxAnoBusca}
+                  onChange={this.handleChange} 
+                />
+              </InputGroup>
+            </Col>
+            <Col style={{marginTop : "20px"}} >
+              <h6>Selecione os países </h6>
+              <InputGroup >
+                <ReactSelect
+                  options={this.state.dadosPaisesSelect}
+                  styles={styles}
+                  isMulti
+                  closeMenuOnSelect={false}
+                  hideSelectedOptions={false}
+                  components={{
+                    Option
+                  }}
+                  onChange={this.handleChangeCheckedSelect}
+                  allowSelectAll={true}
+                  value={this.state.paisesSelecionados}
+                  name = "selectPaises"
+                />
+              </InputGroup>
+            </Col>
           </Row>
           <Row>
           <Col style={{marginTop : "20px"}}>
@@ -323,6 +379,7 @@ export default class CadastroAlunos extends Component{
             </InputGroup>
           </Col>
           </Row>
+
           <br></br>
           <h5>Busque por somente um país para ver o gráfico </h5>
           </Col>

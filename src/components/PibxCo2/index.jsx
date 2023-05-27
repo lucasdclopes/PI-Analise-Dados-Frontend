@@ -9,8 +9,10 @@ import MenuLogado from '../MenuLogado';
 import { Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 
+import { default as ReactSelect } from "react-select";
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, Title, CategoryScale, Legend } from 'chart.js';
+import { components } from "react-select";
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Legend, Title);
 
@@ -36,6 +38,29 @@ export const options = {
   },
 };
 
+const Option = (props) => {
+  return (
+    <div>
+      <components.Option {...props}>
+        <input
+          type="checkbox"
+          checked={props.isSelected}
+          onChange={() => null}
+        />{" "}
+        <label>{props.label}</label>
+      </components.Option>
+    </div>
+  );
+};
+
+const styles = {
+  container: base => ({
+    ...base,
+    flex: 1
+  })
+};
+
+
 
 export default class PibxCo2 extends Component{
 
@@ -44,7 +69,8 @@ export default class PibxCo2 extends Component{
 
     this.state = {
       data: null,
-      dadosPaises: [],
+      paisesSelecionados: null,
+      dadosPaisesSelect:[],
       dadosGrafico: [],
       filtros : {
         idPaises : [],
@@ -172,7 +198,7 @@ export default class PibxCo2 extends Component{
         if (response){
           this.setState(prevState => ({
             ...prevState,
-            dadosPaises : response.data,
+            dadosPaisesSelect :  response.data.map((el) => { return {value:el.idPais, label:el.nomePais} } ),
             filtros : {
               ...prevState.filtros
             }
@@ -199,17 +225,18 @@ export default class PibxCo2 extends Component{
 
       
       console.log('textoBusca ' + this.state.textoBusca);
-      console.log('filtros ' + this.state.filtros);
+      console.log('filtros ' + this.state.minAnoBusca);
 
-      let textoParaBusca = this.state.textoBusca;
       let minAnoBusca = this.state.minAnoBusca;
+      let maxAnoBusca = this.state.maxAnoBusca;
 
       this.setState(prevState => ({
         ...prevState,
         filtros : {
           ...prevState.filtros,
-          idPaises : textoParaBusca ? textoParaBusca.split(','):null,
+          idPaises : this.state.paisesSelecionados ? this.state.paisesSelecionados.map((el) => el.value) : null,
           minAno : minAnoBusca ? minAnoBusca:null,
+          maxAno : maxAnoBusca ? maxAnoBusca:null,
           paginacaoRequest : {
             ...prevState.filtros.paginacaoRequest,
             page: 1
@@ -222,16 +249,24 @@ export default class PibxCo2 extends Component{
 
     this.handleChange = (e) => {
       
+      console.log('e.target.name ' + e.target.name);
       console.log(e.target.type);
       console.log(e.target.value);
-      console.log('e.target.name ' + e.target.name);
 
       const name = e.target.name;
-      const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
+      const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
       this.setState(prevState => ({
         ...prevState,
         [name]: value
+      }));
+    }
+
+    this.handleChangeCheckedSelect = (e) => {
+      console.log(e);
+      console.log('idPaises',this.state.filtros.idPaises);
+      this.setState(prevState => ({
+        ...prevState,
+        paisesSelecionados : e
       }));
     }
 
@@ -293,7 +328,7 @@ export default class PibxCo2 extends Component{
     return (
       <div>
 
-        <Container className="containerListaAlunosTurma" fluid>
+        <Container className="containerCalcPibCo2" fluid>
 
           <Row>
             <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 10, offset: 1}} lg={{span: 10, offset: 1}}>
@@ -303,40 +338,58 @@ export default class PibxCo2 extends Component{
 
           <Row>
             <Col xs={{span: 6, offset: 0}} sm={{span : 6, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
-              <h3 className="Aluno">Dados</h3>
+              <h3 className="Dados">Dados</h3>
             </Col>
           </Row>
 
           <Col style={{marginTop : "60px"}} xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
+
           <Row>
-          <Col style={{marginTop : "60px"}}>
-            <h6>Busque pelo código dos países </h6>
-            <InputGroup >
-              <FormControl 
-                placeholder="Exemplo: 1, 4, 50"
-                aria-label="Buscar por país"
-                aria-describedby="Buscar"
-                name = "textoBusca"
-                value = {this.textoBusca}
-                onChange={this.handleChange} 
-              />
-            </InputGroup>
-          </Col>
-          </Row>
-          <Row>
-          <Col style={{marginTop : "20px"}}>
-          <h6>Busque pelo ano mínimo de corte </h6>
-            <InputGroup >
-              <FormControl 
-                placeholder="Exemplo: 1990"
-                aria-label="Ano mínimo"
-                aria-describedby="Buscar"
-                name = "minAnoBusca"
-                value = {this.minAnoBusca}
-                onChange={this.handleChange} 
-              />
-            </InputGroup>
-          </Col>
+            <Col style={{marginTop : "20px"}} >
+            <h6>Busque pelo ano mínimo de corte </h6>
+              <InputGroup >
+                <FormControl 
+                  placeholder="Exemplo: 1990"
+                  aria-label="Ano mínimo"
+                  aria-describedby="Buscar"
+                  name = "minAnoBusca"
+                  value = {this.minAnoBusca}
+                  onChange={this.handleChange} 
+                />
+              </InputGroup>
+            </Col>
+            <Col style={{marginTop : "20px"}} >
+            <h6>Busque por um ano máximo </h6>
+              <InputGroup >
+                <FormControl 
+                  placeholder="Exemplo: 2020"
+                  aria-label="Ano máximo"
+                  aria-describedby="Buscar"
+                  name = "maxAnoBusca"
+                  value = {this.maxAnoBusca}
+                  onChange={this.handleChange} 
+                />
+              </InputGroup>
+            </Col>
+            <Col style={{marginTop : "20px"}} >
+              <h6>Selecione os países </h6>
+              <InputGroup >
+                <ReactSelect
+                  options={this.state.dadosPaisesSelect}
+                  styles={styles}
+                  isMulti
+                  closeMenuOnSelect={false}
+                  hideSelectedOptions={false}
+                  components={{
+                    Option
+                  }}
+                  onChange={this.handleChangeCheckedSelect}
+                  allowSelectAll={true}
+                  value={this.state.paisesSelecionados}
+                  name = "selectPaises"
+                />
+              </InputGroup>
+            </Col>
           </Row>
           <Row>
           <Col style={{marginTop : "20px"}}>
