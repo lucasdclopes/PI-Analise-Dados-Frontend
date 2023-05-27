@@ -54,7 +54,7 @@ const styles = {
 };
 
 
-export default class CadastroAlunos extends Component{
+export default class Pib extends Component{
 
   constructor(props){
     super(props);

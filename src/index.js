@@ -9,20 +9,9 @@ import './index.css';
 
 import App from './App';
 
-import AreaDoUsuario from './components/AreaDoUsuario';
-
-import CalendarioAulas from './components/CalendarioAulas';
-import Login from './components/Login';
-import Aula from './components/Aula';
-
 import reportWebVitals from './reportWebVitals';
-import ListaAulas from './components/ListaAulas';
-import ListaTurmas from './components/ListaTurmas';
-import Turma from './components/Turma';
 
-import CadastroAlunos from './components/CadastroAlunos';
-import CadastroBeneficios from './components/CadastroBeneficios';
-
+import Pib from './components/Pib';
 import PibxCo2 from './components/PibxCo2';
 
 
@@ -31,16 +20,8 @@ ReactDOM.render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />}></Route>
-      <Route path="/login" element={<Login />}></Route>
-      <Route path="/aula" element={<Aula />}></Route>
-      <Route path="/area-do-usuario" element={<AreaDoUsuario/>}></Route>
-      <Route path="/cadastro-alunos" element={<CadastroAlunos />}></Route>
+      <Route path="/pib" element={<Pib />}></Route>
       <Route path="/pib-x-co2" element={<PibxCo2 />}></Route>
-      <Route path="/cadastro-beneficios" element={<CadastroBeneficios />}></Route>
-      <Route path="/calendario-aulas" element={<CalendarioAulas />}></Route>
-      <Route path="/lista-aulas" element={<ListaAulas />}></Route>
-      <Route path="/lista-turmas" element={<ListaTurmas />}></Route>
-      <Route path="/turma" element={<Turma />}></Route>
     </Routes>
 
     {

@@ -2,7 +2,7 @@ import './App.css';
 import React, { Component } from 'react';
 
 import MenuLogado from "./components/MenuLogado";
-import CadastroAlunos from "./components/CadastroAlunos";
+import Pib from "./components/Pib";
 
 export default class AreaDoUsuario extends Component {
 
@@ -15,7 +15,7 @@ export default class AreaDoUsuario extends Component {
     return (
       <div>
         <MenuLogado/>
-        <CadastroAlunos/>
+        <Pib/>
       </div>
     );
   }
