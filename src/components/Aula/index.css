@@ -1,0 +1,12 @@
+.containerPaginaAulas {
+  padding-top: 60px;
+}
+
+.quantidadeFaltantes {
+  color:rgb(202, 0, 0);
+  /* font-weight: bold ;*/
+}
+
+.btnFinalizarAula {
+  margin-left: 20px;
+}

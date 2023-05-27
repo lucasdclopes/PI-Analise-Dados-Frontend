@@ -1,0 +1,32 @@
+body {
+  padding-top: 60px;
+}
+
+#imgBackgroundMain {
+  width: 100%;
+}
+
+#descricaoSistema {
+  text-align : "center";
+}
+
+.listItem {
+  text-align: left;
+}
+
+.beneficiosSistema {
+  background-color: #888;  
+}
+
+.paddingContainer {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.footer {
+  background-image: url('./assets/images/background_footer.jpg');
+}
+
+#copyright {
+  color: #FFF;
+}

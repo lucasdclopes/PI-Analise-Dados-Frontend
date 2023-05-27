@@ -1,0 +1,16 @@
+.containerCalendarioAulas {
+  padding-top: 60px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.pagination li {
+  display: block;
+ }
+
+ .tituloModulo {
+   margin-bottom: 40px;
+ }
