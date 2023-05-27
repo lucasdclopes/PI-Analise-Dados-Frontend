@@ -19,6 +19,30 @@ ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Legend, 
 
 export const options = {
   responsive: true,
+  scales: {
+    yCo2: {
+      type: 'linear',
+      display: true,
+      position: 'left',
+      title: {
+        display: true,
+        text: 'CO2'
+      },
+    },
+    yPibPerCapita: {
+      type: 'linear',
+      display: true,
+      position: 'right',
+      title: {
+        display: true,
+        text: 'PIB Per Capita'
+      },
+      // grid line settings
+      grid: {
+        drawOnChartArea: false, // only want the grid lines for one axis to show up
+      },
+    },
+  },
   plugins: {
     legend: {
       position: 'top',
@@ -76,7 +100,7 @@ export default class PibxCo2 extends Component{
         idPaises : [],
         minAno : null,
         maxAno : null,
-        normalizar: true,
+        normalizar: false,
       },
       erroModal : {
         mensagemErro : '',
@@ -151,27 +175,27 @@ export default class PibxCo2 extends Component{
                   label: 'Emissão CO2',
                   backgroundColor: 'rgba(194, 116, 161, 0.5)',
                   borderColor: 'rgb(194, 116, 161)',
-                  data: response.data.map((el) => normalizar ? el.co2.tendenciaCentralNormalizado : el.co2.tendenciaCentral),
+                  data: response.data.map(
+                    (el) => normalizar ? 
+                      el.co2.tendenciaCentralNormalizado : el.co2.tendenciaCentral
+                    ),
                   pointBorderColor: 'rgba(0, 0, 0, 0)',
                   pointBackgroundColor: 'rgba(0, 0, 0, 0)',
+                  yAxisID: 'yCo2',
                 },
                 {
                   label: 'PIB Per Capita',
                   backgroundColor: 'rgba(71, 225, 167, 0.5)',
                   borderColor: 'rgb(71, 225, 167)',
-                  data: response.data.map((el) => normalizar ? el.pibPerCap.tendenciaCentralNormalizado : el.pibPerCap.tendenciaCentral),
+                  data: response.data.map(
+                    (el) => normalizar ? 
+                      el.pibPerCap.tendenciaCentralNormalizado 
+                      : el.pibPerCap.tendenciaCentral
+                    ),
                   pointBorderColor: 'rgba(0, 0, 0, 0)',
                   pointBackgroundColor: 'rgba(0, 0, 0, 0)',
-                },
-                {
-                  label: 'PIB',
-                  backgroundColor: 'rgba(71, 225, 167, 0.5)',
-                  borderColor: 'rgb(71, 225, 167)',
-                  borderDash: [5, 5],
-                  data: response.data.map((el) => normalizar ? el.pib.tendenciaCentralNormalizado : el.pib.tendenciaCentral),
-                  pointBorderColor: 'rgba(0, 0, 0, 0)',
-                  pointBackgroundColor: 'rgba(0, 0, 0, 0)',
-                },
+                  yAxisID: 'yPibPerCapita',
+                }
               ]
             },
           }));       
