@@ -184,37 +184,10 @@ export default class CadastroAlunos extends Component{
       let textoParaBusca = this.state.textoBusca;
       let minAnoBusca = this.state.minAnoBusca;
 
-      if (!this.state.textoBusca){
-        console.log('this.state.textoBusca not null ');
-        this.setState(prevState => ({
-          ...prevState,
-          filtros : {
-            ...prevState.filtros,
-            idPaises : null
-          }
-          }
-        ),() => {this.obterLista();}
-        );
-      }
-
-      if (!this.state.minAnoBusca){
-        console.log('this.state.minAnoBusca not null ');
-        this.setState(prevState => ({
-          ...prevState,
-          filtros : {
-            ...prevState.filtros,
-            minAno : null
-          }
-          }
-        ),() => {this.obterLista();}
-        );
-      }
-
       this.setState(prevState => ({
         ...prevState,
         data : {
           labels: this.state.dadosGrafico.map((el) => el.Ano),
-          //labels: [10,20,30,40,155,900],
           datasets: [
             {
               label: 'PIB',
@@ -233,7 +206,7 @@ export default class CadastroAlunos extends Component{
         filtros : {
           ...prevState.filtros,
           idPaises : textoParaBusca ? textoParaBusca.split(','):null,
-          minAno : minAnoBusca,
+          minAno : minAnoBusca ? minAnoBusca:null,
           paginacaoRequest : {
             ...prevState.filtros.paginacaoRequest,
             page: 1
@@ -320,17 +293,11 @@ export default class CadastroAlunos extends Component{
                 value = {this.textoBusca}
                 onChange={this.handleChange} 
               />
-
-              <Button id="btnBuscar"
-              onClick={this.buscarPais}
-              >
-                Buscar
-              </Button>
             </InputGroup>
           </Col>
           </Row>
           <Row>
-          <Col style={{marginTop : "60px"}}>
+          <Col style={{marginTop : "20px"}}>
           <h6>Busque pelo ano mínimo de corte </h6>
             <InputGroup >
               <FormControl 
@@ -341,6 +308,12 @@ export default class CadastroAlunos extends Component{
                 value = {this.minAnoBusca}
                 onChange={this.handleChange} 
               />
+            </InputGroup>
+          </Col>
+          </Row>
+          <Row>
+          <Col style={{marginTop : "20px"}}>
+            <InputGroup >
 
               <Button id="btnBuscar"
               onClick={this.buscarPais}
