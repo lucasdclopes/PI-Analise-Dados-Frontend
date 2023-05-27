@@ -20,6 +20,35 @@ ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Legend, 
 
 export const options = {
   responsive: true,
+  interaction: {
+    mode: 'index',
+    intersect: false,
+  },
+  stacked: false,
+  scales: {
+    yPib: {
+      type: 'linear',
+      display: true,
+      position: 'left',
+      title: {
+        display: true,
+        text: 'PIB'
+      },
+    },
+    yPibPerCapita: {
+      type: 'linear',
+      display: true,
+      position: 'right',
+      title: {
+        display: true,
+        text: 'PIB Per Capita'
+      },
+      // grid line settings
+      grid: {
+        drawOnChartArea: false, // only want the grid lines for one axis to show up
+      },
+    },
+  },
   plugins: {
     legend: {
       position: 'top',
@@ -223,12 +252,15 @@ export default class Pib extends Component{
               backgroundColor: 'rgba(194, 116, 161, 0.5)',
               borderColor: 'rgb(194, 116, 161)',
               data: this.state.dadosGrafico.map((el) => el.pibTotal),
+              yAxisID: 'yPib',
             },
             {
               label: 'PIB Per Capita',
               backgroundColor: 'rgba(71, 225, 167, 0.5)',
               borderColor: 'rgb(71, 225, 167)',
               data: this.state.dadosGrafico.map((el) => el.pibPerCapita),
+              yAxisID: 'yPibPerCapita',
+
             },
           ]
         },

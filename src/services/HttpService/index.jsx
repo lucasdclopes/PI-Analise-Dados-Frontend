@@ -1,7 +1,6 @@
 import axios from 'axios';
 import UsuarioLogadoDto from '../../dto/UsuarioLogadoDto';
 
-
 const host = window.location.protocol + "//" + window.location.host;
 const urlBase = 'http://localhost/api'; //<- testes local
 //const urlBase = host + '/api'; //<- build acesso na rede
@@ -16,17 +15,17 @@ const defaultConfig = {
   headers : defaultHeaders.headers 
 }
 
-
 export default class HttpService{
 
   static queryPaginacao = (paginacao) => {
-    return (!paginacao.size || !paginacao.page) ? '' : 'size=' + paginacao.size + '&page=' + (paginacao.page - 1); 
+    return (!paginacao.size || !paginacao.page) ? 
+      '' : 
+      'size=' + paginacao.size + '&page=' + (paginacao.page - 1); 
   } 
-
   static gerarParams = (arrParams) => {
-    return (arrParams.length > 0) ? '?'+arrParams.join('&'):'';
+    return (arrParams.length > 0) ? 
+      '?'+arrParams.join('&'):'';
   }
-
 
   static listarPaises = async (filtros) => {
     console.log('filtros listarPaises',filtros);
@@ -38,7 +37,9 @@ export default class HttpService{
     }
 
     if (filtros.paginacaoRequest) {
-      queryParams.push(HttpService.queryPaginacao(filtros.paginacaoRequest));
+      queryParams.push(HttpService.queryPaginacao(
+        filtros.paginacaoRequest
+        ));
     }
 
     url += HttpService.gerarParams(queryParams);
@@ -68,7 +69,9 @@ export default class HttpService{
     }
 
     if (filtros.paginacaoRequest) {
-      queryParams.push(HttpService.queryPaginacao(filtros.paginacaoRequest));
+      queryParams.push(HttpService.queryPaginacao(
+        filtros.paginacaoRequest
+        ));
     }
 
     url += HttpService.gerarParams(queryParams);
