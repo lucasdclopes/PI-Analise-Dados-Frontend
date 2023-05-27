@@ -261,6 +261,20 @@ export default class PibxCo2 extends Component{
       }));
     }
 
+    this.handleChangeNumerico = (e) => {
+
+      const re = /^[0-9\b]+$/;
+      if (e.target.value === '' || re.test(e.target.value)) {
+        console.log('noif');
+        const name = e.target.name;
+        const value =
+        e.target.type === "checkbox" ? e.target.checked : e.target.value;
+        this.setState({ 
+          [name]: value 
+        });
+      } 
+    }
+
     this.handleChangeCheckedSelect = (e) => {
       console.log(e);
       console.log('idPaises',this.state.filtros.idPaises);
@@ -354,7 +368,8 @@ export default class PibxCo2 extends Component{
                   aria-describedby="Buscar"
                   name = "minAnoBusca"
                   value = {this.minAnoBusca}
-                  onChange={this.handleChange} 
+                  onChange={this.handleChangeNumerico} 
+                  type="number"
                 />
               </InputGroup>
             </Col>
@@ -367,7 +382,8 @@ export default class PibxCo2 extends Component{
                   aria-describedby="Buscar"
                   name = "maxAnoBusca"
                   value = {this.maxAnoBusca}
-                  onChange={this.handleChange} 
+                  onChange={this.handleChangeNumerico} 
+                  type="number"
                 />
               </InputGroup>
             </Col>
@@ -434,13 +450,13 @@ export default class PibxCo2 extends Component{
                 <thead>
                   <tr>
                       <th>Ano</th>
-                      <th>Pib</th>
+                      <th>Pib - USD</th>
                       <th>Pib (máximo)</th>
                       <th>Pib (mínimo)</th>
-                      <th>Pib Per Capita</th>
+                      <th>Pib Per Capita - USD</th>
                       <th>Pib Per Capita (máximo)</th>
                       <th>Pib Per Capita (mínimo)</th>
-                      <th>Emissão CO2</th>
+                      <th>Emissão CO2 - toneladas</th>
                       <th>Emissão CO2 (máximo)</th>
                       <th>Emissão CO2 (mínimo)</th>
                   </tr>

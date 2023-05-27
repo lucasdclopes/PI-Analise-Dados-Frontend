@@ -271,6 +271,20 @@ export default class CadastroAlunos extends Component{
       }));
     }
 
+    this.handleChangeNumerico = (e) => {
+
+      const re = /^[0-9\b]+$/;
+      if (e.target.value === '' || re.test(e.target.value)) {
+        console.log('noif');
+        const name = e.target.name;
+        const value =
+        e.target.type === "checkbox" ? e.target.checked : e.target.value;
+        this.setState({ 
+          [name]: value 
+        });
+      } 
+    }
+
   
     this.limparFiltros = (e) => {
       console.log('limpando filtros');
@@ -330,7 +344,8 @@ export default class CadastroAlunos extends Component{
                   aria-describedby="Buscar"
                   name = "minAnoBusca"
                   value = {this.minAnoBusca}
-                  onChange={this.handleChange} 
+                  onChange={this.handleChangeNumerico} 
+                  type="number"
                 />
               </InputGroup>
             </Col>
@@ -343,7 +358,8 @@ export default class CadastroAlunos extends Component{
                   aria-describedby="Buscar"
                   name = "maxAnoBusca"
                   value = {this.maxAnoBusca}
-                  onChange={this.handleChange} 
+                  onChange={this.handleChangeNumerico} 
+                  type="number"
                 />
               </InputGroup>
             </Col>
@@ -400,9 +416,9 @@ export default class CadastroAlunos extends Component{
                   <tr>
                       <th>Ano</th>
                       <th>País</th>
-                      <th>Pib</th>
-                      <th>Variacao Pib</th>
-                      <th>Pib Per Capita</th>
+                      <th>Pib - USD</th>
+                      <th>Variacao Pib - %</th>
+                      <th>Pib Per Capita - USD</th>
                   </tr>
                 </thead>
 
