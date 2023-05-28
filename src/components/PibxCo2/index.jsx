@@ -414,9 +414,8 @@ export default class PibxCo2 extends Component{
                 </InputGroup>
               </Col>
               <Col xs={2}>
-              <div class="span3 checkbox">
+              <div className="span3 checkbox">
                 <Form.Check 
-                verticalAlign="middle"
                 type={"checkbox"}
                 name="normalizar"
                 id={1}
@@ -428,7 +427,7 @@ export default class PibxCo2 extends Component{
               </Col>
 
               <Col xs={2} >
-              <div class="span3 checkbox">
+              <div className="span3 checkbox">
                 <Form.Check  
                 type={"checkbox"}
                 name="isCo2PerCapita"
@@ -478,7 +477,7 @@ export default class PibxCo2 extends Component{
                       <th>Pib Per Capita - USD</th>
                       <th>Pib Per Capita (máximo)</th>
                       <th>Pib Per Capita (mínimo)</th>
-                      <th>Emissão CO2 - toneladas</th>
+                      <th>Emissão CO2 {this.state.isCo2PerCapita? "Per Capita":""} - toneladas</th>
                       <th>Emissão CO2 (máximo)</th>
                       <th>Emissão CO2 (mínimo)</th>
                   </tr>

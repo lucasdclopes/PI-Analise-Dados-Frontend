@@ -257,45 +257,31 @@ export default class Pib extends Component{
       console.log('textoBusca ' + this.state.textoBusca);
       console.log('filtros ' + this.state.filtros);
 
-      let textoParaBusca = this.state.textoBusca;
       let minAnoBusca = this.state.minAnoBusca;
       let maxAnoBusca = this.state.maxAnoBusca;
+      let idPaises = this.state.paisesSelecionados ? this.state.paisesSelecionados.map((el) => el.value) : null;
 
       this.setState(prevState => ({
         ...prevState,
-        data : {
-          labels: this.state.dadosGrafico.map((el) => el.Ano),
-          datasets: [
-            {
-              label: 'PIB',
-              backgroundColor: 'rgba(194, 116, 161, 0.5)',
-              borderColor: 'rgb(194, 116, 161)',
-              data: this.state.dadosGrafico.map((el) => el.pibTotal),
-              yAxisID: 'yPib',
-            },
-            {
-              label: 'PIB Per Capita',
-              backgroundColor: 'rgba(71, 225, 167, 0.5)',
-              borderColor: 'rgb(71, 225, 167)',
-              data: this.state.dadosGrafico.map((el) => el.pibPerCapita),
-              yAxisID: 'yPibPerCapita',
-
-            },
-          ]
-        },
         filtros : {
           ...prevState.filtros,
-          idPaises : this.state.paisesSelecionados ? this.state.paisesSelecionados.map((el) => el.value) : null,
+          idPaises : idPaises,
           minAno : minAnoBusca ? minAnoBusca:null,
           maxAno : maxAnoBusca ? maxAnoBusca:null,
           paginacaoRequest : {
             ...prevState.filtros.paginacaoRequest,
-            page: 1
+            page : 1,
+            size : this.checkGerarGrafico(idPaises)? 1000 : 50
           }
           }
         }
       ),() => {this.obterLista();}
       );
+    }
+
+
+    this.checkGerarGrafico = (idPaises) => {
+      return (idPaises) && (idPaises.length == 1);
     }
 
     this.handleChangeCheckedSelect = (e) => {
@@ -462,7 +448,7 @@ export default class Pib extends Component{
           </Col>
 
           {
-          (this.state.filtros.idPaises) && (this.state.filtros.idPaises.length == 1) &&
+          (this.checkGerarGrafico(this.state.filtros.idPaises)) &&
           <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
           <Line 
             data={this.state.data} options={options} />
