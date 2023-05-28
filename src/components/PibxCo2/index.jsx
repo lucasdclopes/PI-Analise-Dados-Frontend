@@ -478,8 +478,8 @@ export default class PibxCo2 extends Component{
                       <th>Pib Per Capita (máximo)</th>
                       <th>Pib Per Capita (mínimo)</th>
                       <th>Emissão CO2 {this.state.isCo2PerCapita? "Per Capita":""} - toneladas</th>
-                      <th>Emissão CO2 (máximo)</th>
-                      <th>Emissão CO2 (mínimo)</th>
+                      <th>Emissão CO2 {this.state.isCo2PerCapita? "Per Capita":""} (máximo)</th>
+                      <th>Emissão CO2 {this.state.isCo2PerCapita? "Per Capita":""} (mínimo)</th>
                   </tr>
                 </thead>
 
