@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Container, Table, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
+import { Container, Table, Row, Col, InputGroup, FormControl, Form, Card } from 'react-bootstrap';
 import './index.css';
 import HttpService from '../../services/HttpService';
 import HttpServiceHandler from '../../services/HttpServiceHandler';
@@ -168,14 +168,33 @@ export default class Pib extends Component{
       console.log('obterLista');
       HttpService.listarPibPaises(this.state.filtros)
       .then((response) => {
+        let respostaComNomePaises = response.data.map((item) => {
+          return {...item, nomePais: this.state.dadosPaises.find((el) => el.idPais == item.idPais).nomePais}
+        });
         if (response){
           this.setState(prevState => ({
             ...prevState,
-            //dadosGrafico : response.data.map((item) => item.idPais = this.state.dadosPaises.find((el) => el.idPais == item.idPais).nomePais),
-            dadosGrafico : response.data.map((item) => {
-              return {...item, nomePais: this.state.dadosPaises.find((el) => el.idPais == item.idPais).nomePais}
-            }),
-            //dadosGrafico : response.data,
+            data : {
+              labels: respostaComNomePaises.map((el) => el.Ano),
+              datasets: [
+                {
+                  label: 'PIB',
+                  backgroundColor: 'rgba(194, 116, 161, 0.5)',
+                  borderColor: 'rgb(194, 116, 161)',
+                  data: respostaComNomePaises.map((el) => el.pibTotal),
+                  yAxisID: 'yPib',
+                },
+                {
+                  label: 'PIB Per Capita',
+                  backgroundColor: 'rgba(71, 225, 167, 0.5)',
+                  borderColor: 'rgb(71, 225, 167)',
+                  data: respostaComNomePaises.map((el) => el.pibPerCapita),
+                  yAxisID: 'yPibPerCapita',
+    
+                },
+              ]
+            },
+            dadosGrafico : respostaComNomePaises,
             filtros : {
               ...prevState.filtros,
               paginacaoResponse : {
@@ -366,55 +385,65 @@ export default class Pib extends Component{
           </Row>
 
           <Col style={{marginTop : "60px"}} xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
-          <Row>
-            <Col style={{marginTop : "20px"}} >
-            <h6>Busque pelo ano mínimo de corte </h6>
-              <InputGroup >
-                <FormControl 
-                  placeholder="Exemplo: 1990"
-                  aria-label="Ano mínimo"
-                  aria-describedby="Buscar"
-                  name = "minAnoBusca"
-                  value = {this.minAnoBusca}
-                  onChange={this.handleChangeNumerico} 
-                  type="number"
-                />
-              </InputGroup>
-            </Col>
-            <Col style={{marginTop : "20px"}} >
-            <h6>Busque por um ano máximo </h6>
-              <InputGroup >
-                <FormControl 
-                  placeholder="Exemplo: 2020"
-                  aria-label="Ano máximo"
-                  aria-describedby="Buscar"
-                  name = "maxAnoBusca"
-                  value = {this.maxAnoBusca}
-                  onChange={this.handleChangeNumerico} 
-                  type="number"
-                />
-              </InputGroup>
-            </Col>
-            <Col style={{marginTop : "20px"}} >
-              <h6>Selecione os países </h6>
-              <InputGroup >
-                <ReactSelect
-                  options={this.state.dadosPaisesSelect}
-                  styles={styles}
-                  isMulti
-                  closeMenuOnSelect={false}
-                  hideSelectedOptions={false}
-                  components={{
-                    Option
-                  }}
-                  onChange={this.handleChangeCheckedSelect}
-                  allowSelectAll={true}
-                  value={this.state.paisesSelecionados}
-                  name = "selectPaises"
-                />
-              </InputGroup>
-            </Col>
-          </Row>
+
+          <div>
+          <Card className="mb-3" border="primary" style={{marginTop : "20px"}} >
+            <Card.Header>Opções e Filtros</Card.Header>
+            <Row className="mb-3">
+
+              <Col xs={2}>
+              <Form.Group className="ps-2" controlId="graficoForm.minAno">
+                <Form.Label>A partir do ano</Form.Label>
+                <InputGroup >
+                  <FormControl 
+                    placeholder="Exemplo: 1990"
+                    aria-label="Ano mínimo"
+                    aria-describedby="Buscar"
+                    name = "minAnoBusca"
+                    value = {this.minAnoBusca}
+                    onChange={this.handleChangeNumerico} 
+                    type="number"
+                  />
+                </InputGroup>
+              </Form.Group>
+              </Col>
+              <Col xs={2}>
+                <Form.Label>Até o ano</Form.Label>
+                <InputGroup >
+                  <FormControl 
+                    placeholder="Exemplo: 2020"
+                    aria-label="Ano máximo"
+                    aria-describedby="Buscar"
+                    name = "maxAnoBusca"
+                    value = {this.maxAnoBusca}
+                    onChange={this.handleChangeNumerico} 
+                    type="number"
+                  />
+                </InputGroup>
+              </Col>
+              <Col xs={4}>
+                <Form.Label>Selecione os países</Form.Label>
+                <InputGroup >
+                  <ReactSelect
+                    options={this.state.dadosPaisesSelect}
+                    styles={styles}
+                    isMulti
+                    closeMenuOnSelect={false}
+                    hideSelectedOptions={false}
+                    components={{
+                      Option
+                    }}
+                    onChange={this.handleChangeCheckedSelect}
+                    allowSelectAll={true}
+                    value={this.state.paisesSelecionados}
+                    name = "selectPaises"
+                  />
+                </InputGroup>
+              </Col>
+            </Row>  
+          </Card>
+          </div>   
+
           <Row>
           <Col style={{marginTop : "20px"}}>
             <InputGroup >

@@ -99,6 +99,10 @@ export default class HttpService{
     if (filtros.maxAno) {
       queryParams.push('maxAno=' + filtros.maxAno);
     }
+    if (filtros.isCo2PerCapita) {
+      queryParams.push('isCo2PerCapita=' + filtros.isCo2PerCapita);
+    }
+
 
     url += HttpService.gerarParams(queryParams);
 

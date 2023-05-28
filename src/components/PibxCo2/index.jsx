@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Container, Table, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
+import { Container, Table, Row, Col, InputGroup, FormControl, Card } from 'react-bootstrap';
 import './index.css';
 import HttpService from '../../services/HttpService';
 import HttpServiceHandler from '../../services/HttpServiceHandler';
@@ -37,9 +37,8 @@ export const options = {
         display: true,
         text: 'PIB Per Capita'
       },
-      // grid line settings
       grid: {
-        drawOnChartArea: false, // only want the grid lines for one axis to show up
+        drawOnChartArea: false,
       },
     },
   },
@@ -96,11 +95,13 @@ export default class PibxCo2 extends Component{
       paisesSelecionados: null,
       dadosPaisesSelect:[],
       dadosGrafico: [],
+      normalizar: false,
+      isCo2PerCapita: false,
       filtros : {
         idPaises : [],
         minAno : null,
         maxAno : null,
-        normalizar: false,
+        isCo2PerCapita : false,
       },
       erroModal : {
         mensagemErro : '',
@@ -161,7 +162,7 @@ export default class PibxCo2 extends Component{
 
     this.obterLista = () => {
       console.log('obterLista');
-      let normalizar = this.state.filtros.normalizar;
+      let normalizar = this.state.normalizar;
       HttpService.calcularPibCo2Paises(this.state.filtros)
       .then((response) => {
         if (response){
@@ -261,6 +262,7 @@ export default class PibxCo2 extends Component{
           idPaises : this.state.paisesSelecionados ? this.state.paisesSelecionados.map((el) => el.value) : null,
           minAno : minAnoBusca ? minAnoBusca:null,
           maxAno : maxAnoBusca ? maxAnoBusca:null,
+          isCo2PerCapita : this.state.isCo2PerCapita,
           paginacaoRequest : {
             ...prevState.filtros.paginacaoRequest,
             page: 1
@@ -307,31 +309,6 @@ export default class PibxCo2 extends Component{
         paisesSelecionados : e
       }));
     }
-
-    this.toggleExibirNormalizado = (e) => {
-      if (e.target.checked){
-        this.setState(prevState => ({
-          filtros : {
-            ...prevState.filtros,
-            normalizar : true
-          }
-        }), () => {
-          this.obterLista();
-        });
-        
-      }
-      else {
-        this.setState(prevState => ({
-          filtros : {
-            ...prevState.filtros,
-            normalizar : false
-          }
-        }), () => {
-          this.obterLista();
-        });
-      }
-    }
-
   
     this.limparFiltros = (e) => {
       console.log('limpando filtros');
@@ -375,62 +352,97 @@ export default class PibxCo2 extends Component{
           </Row>
 
           <Row>
-            <Col xs={{span: 6, offset: 0}} sm={{span : 6, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
+            <Col style={{marginTop : "60px"}}  xs={{span: 6, offset: 0}} sm={{span : 6, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
               <h3 className="Dados">Dados</h3>
             </Col>
           </Row>
 
           <Col style={{marginTop : "60px"}} xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
 
-          <Row>
-            <Col style={{marginTop : "20px"}} >
-            <h6>Busque pelo ano mínimo de corte </h6>
-              <InputGroup >
-                <FormControl 
-                  placeholder="Exemplo: 1990"
-                  aria-label="Ano mínimo"
-                  aria-describedby="Buscar"
-                  name = "minAnoBusca"
-                  value = {this.minAnoBusca}
-                  onChange={this.handleChangeNumerico} 
-                  type="number"
+          <div>
+          <Card className="mb-3" border="primary" style={{marginTop : "20px"}} >
+            <Card.Header>Opções e Filtros</Card.Header>
+            <Row className="mb-3">
+
+              <Col xs={2}>
+              <Form.Group className="ps-2" controlId="graficoForm.minAno">
+                <Form.Label>A partir do ano</Form.Label>
+                <InputGroup >
+                  <FormControl 
+                    placeholder="Exemplo: 1990"
+                    aria-label="Ano mínimo"
+                    aria-describedby="Buscar"
+                    name = "minAnoBusca"
+                    value = {this.minAnoBusca}
+                    onChange={this.handleChangeNumerico} 
+                    type="number"
+                  />
+                </InputGroup>
+              </Form.Group>
+              </Col>
+              <Col xs={2}>
+                <Form.Label>Até o ano</Form.Label>
+                <InputGroup >
+                  <FormControl 
+                    placeholder="Exemplo: 2020"
+                    aria-label="Ano máximo"
+                    aria-describedby="Buscar"
+                    name = "maxAnoBusca"
+                    value = {this.maxAnoBusca}
+                    onChange={this.handleChangeNumerico} 
+                    type="number"
+                  />
+                </InputGroup>
+              </Col>
+              <Col xs={4}>
+                <Form.Label>Selecione os países</Form.Label>
+                <InputGroup >
+                  <ReactSelect
+                    options={this.state.dadosPaisesSelect}
+                    styles={styles}
+                    isMulti
+                    closeMenuOnSelect={false}
+                    hideSelectedOptions={false}
+                    components={{
+                      Option
+                    }}
+                    onChange={this.handleChangeCheckedSelect}
+                    allowSelectAll={true}
+                    value={this.state.paisesSelecionados}
+                    name = "selectPaises"
+                  />
+                </InputGroup>
+              </Col>
+              <Col xs={2}>
+              <div class="span3 checkbox">
+                <Form.Check 
+                verticalAlign="middle"
+                type={"checkbox"}
+                name="normalizar"
+                id={1}
+                label={"normalizar os dados"}
+                checked={this.state.normalizar}
+                onChange={this.handleChange}
                 />
-              </InputGroup>
-            </Col>
-            <Col style={{marginTop : "20px"}} >
-            <h6>Busque por um ano máximo </h6>
-              <InputGroup >
-                <FormControl 
-                  placeholder="Exemplo: 2020"
-                  aria-label="Ano máximo"
-                  aria-describedby="Buscar"
-                  name = "maxAnoBusca"
-                  value = {this.maxAnoBusca}
-                  onChange={this.handleChangeNumerico} 
-                  type="number"
+                </div>
+              </Col>
+
+              <Col xs={2} >
+              <div class="span3 checkbox">
+                <Form.Check  
+                type={"checkbox"}
+                name="isCo2PerCapita"
+                id={2}
+                label={"Usar CO2 Per Capita"}
+                checked={this.state.isCo2PerCapita}
+                onChange={this.handleChange}
                 />
-              </InputGroup>
-            </Col>
-            <Col style={{marginTop : "20px"}} >
-              <h6>Selecione os países </h6>
-              <InputGroup >
-                <ReactSelect
-                  options={this.state.dadosPaisesSelect}
-                  styles={styles}
-                  isMulti
-                  closeMenuOnSelect={false}
-                  hideSelectedOptions={false}
-                  components={{
-                    Option
-                  }}
-                  onChange={this.handleChangeCheckedSelect}
-                  allowSelectAll={true}
-                  value={this.state.paisesSelecionados}
-                  name = "selectPaises"
-                />
-              </InputGroup>
-            </Col>
-          </Row>
+              </div>
+              </Col>
+            </Row>  
+          </Card>
+          </div>   
+
           <Row>
           <Col style={{marginTop : "20px"}}>
             <InputGroup >
@@ -438,25 +450,11 @@ export default class PibxCo2 extends Component{
               <Button id="btnBuscar"
               onClick={this.buscarPais}
               >
-                Buscar
+                Gerar Gráfico
               </Button>
             </InputGroup>
           </Col>
           </Row>
-          <Row>
-
-            <Form.Check 
-              type={"checkbox"}
-              id={1}
-              label={"normalizar os dados"}
-              checked={this.state.filtros.normalizar}
-              onChange={this.toggleExibirNormalizado}
-            />
-
-            {
-              <span>{this.state.filtros.diaSemana}</span>
-            }
-            </Row>
           </Col>
 
 
