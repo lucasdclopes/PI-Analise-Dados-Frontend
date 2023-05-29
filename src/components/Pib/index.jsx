@@ -3,6 +3,7 @@ import { Container, Table, Row, Col, InputGroup, FormControl, Form, Card } from 
 import './index.css';
 import HttpService from '../../services/HttpService';
 import HttpServiceHandler from '../../services/HttpServiceHandler';
+import RgbHelper from "../../helpers/RgbHelper";
 import ErroModal from '../ErroModal';
 import Button from 'react-bootstrap/Button';
 import MenuLogado from '../MenuLogado';
@@ -82,6 +83,8 @@ const styles = {
   })
 };
 
+const default_itens_pagina = 30;
+
 
 export default class Pib extends Component{
 
@@ -96,7 +99,7 @@ export default class Pib extends Component{
       dadosGrafico: [],
       filtros : {
         paginacaoRequest : {
-          size: 50,
+          size: default_itens_pagina,
           page: 1
         },
         paginacaoResponse : {
@@ -168,14 +171,58 @@ export default class Pib extends Component{
       console.log('obterLista');
       HttpService.listarPibPaises(this.state.filtros)
       .then((response) => {
-        let respostaComNomePaises = response.data.map((item) => {
-          return {...item, nomePais: this.state.dadosPaises.find((el) => el.idPais == item.idPais).nomePais}
-        });
         if (response){
+          let respostaComNomePaises = response.data.map((item) => {
+            return {...item, nomePais: this.state.dadosPaises.find((el) => el.idPais == item.idPais).nomePais}
+          });
+
+          let datasets = []
+          let labels = []
+          let cor = RgbHelper.getRandomColor();
+          if (this.state.filtros.idPaises){ 
+            //console.log('idPaises',this.state.filtros.idPaises);
+            this.state.filtros.idPaises.forEach((el) => {
+
+              console.log('el',el);
+              let corAnterior = cor;
+              cor = RgbHelper.getRandomColor();
+              if (corAnterior == cor)
+                cor = RgbHelper.getRandomColor();
+
+              let dadosPais = respostaComNomePaises.filter((pais) => pais.idPais == el);
+              
+              //console.log('dadosPais',dadosPais);
+              if (labels.length == 0)
+                labels = dadosPais.map((el) => el.Ano);
+
+              if (dadosPais && dadosPais.length > 0){
+                let dadosDataset = {
+                  label: 'PIB - ' + dadosPais[0].nomePais,
+                  backgroundColor: cor,
+                  borderColor: cor,
+                  data: dadosPais.map((elPais) => elPais.pibTotal),
+                  yAxisID: 'yPib'
+                };
+                datasets.push(dadosDataset);
+
+                dadosDataset = {
+                  label: 'PIB Per Capita ' + dadosPais[0].nomePais,
+                  backgroundColor: cor,
+                  borderColor: cor,
+                  borderDash: [5, 5],
+                  data: dadosPais.map((elPais) => elPais.pibPerCapita),
+                  yAxisID: 'yPibPerCapita'
+                  }; 
+                datasets.push(dadosDataset);
+                }
+            });
+          }
           this.setState(prevState => ({
             ...prevState,
             data : {
-              labels: respostaComNomePaises.map((el) => el.Ano),
+              //labels: respostaComNomePaises.map((el) => el.Ano),
+              labels: labels,
+              /*
               datasets: [
                 {
                   label: 'PIB',
@@ -192,7 +239,8 @@ export default class Pib extends Component{
                   yAxisID: 'yPibPerCapita',
     
                 },
-              ]
+              ]*/
+              datasets: datasets
             },
             dadosGrafico : respostaComNomePaises,
             filtros : {
@@ -257,7 +305,7 @@ export default class Pib extends Component{
           paginacaoRequest : {
             ...prevState.filtros.paginacaoRequest,
             page : 1,
-            size : this.checkGerarGrafico(idPaises)? 1000 : 50
+            size : this.checkGerarGrafico(idPaises)? 1000000 : default_itens_pagina
           }
           }
         }
@@ -267,7 +315,7 @@ export default class Pib extends Component{
 
 
     this.checkGerarGrafico = (idPaises) => {
-      return (idPaises) && (idPaises.length == 1);
+      return (idPaises) && (idPaises.length >= 1 && idPaises.length < 6);
     }
 
     this.handleChangeCheckedSelect = (e) => {
@@ -430,7 +478,7 @@ export default class Pib extends Component{
           </Row>
 
           <br></br>
-          <h5>Busque por somente um país para ver o gráfico </h5>
+          <h5>Busque de um até cinco países para ver o gráfico </h5>
           </Col>
 
           {

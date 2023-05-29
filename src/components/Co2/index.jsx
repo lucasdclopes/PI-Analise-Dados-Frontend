@@ -3,6 +3,7 @@ import { Container, Table, Row, Col, InputGroup, FormControl, Form, Card } from 
 import './index.css';
 import HttpService from '../../services/HttpService';
 import HttpServiceHandler from '../../services/HttpServiceHandler';
+import RgbHelper from "../../helpers/RgbHelper";
 import ErroModal from '../ErroModal';
 import Button from 'react-bootstrap/Button';
 import MenuLogado from '../MenuLogado';
@@ -26,7 +27,7 @@ export const options = {
   },
   stacked: false,
   scales: {
-    yPib: {
+    yCo2: {
       type: 'linear',
       display: true,
       position: 'left',
@@ -35,7 +36,7 @@ export const options = {
         text: 'CO2'
       },
     },
-    yPibPerCapita: {
+    yCo2PerCap: {
       type: 'linear',
       display: true,
       position: 'right',
@@ -55,7 +56,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: 'Dados de PIB',
+      text: 'Dados de CO2',
     },
   },
 };
@@ -82,6 +83,7 @@ const styles = {
   })
 };
 
+const default_itens_pagina = 50;
 
 export default class Co2 extends Component{
 
@@ -96,7 +98,7 @@ export default class Co2 extends Component{
       dadosGrafico: [],
       filtros : {
         paginacaoRequest : {
-          size: 50,
+          size: default_itens_pagina,
           page: 1
         },
         paginacaoResponse : {
@@ -168,31 +170,73 @@ export default class Co2 extends Component{
       console.log('obterLista');
       HttpService.listarCo2Paises(this.state.filtros)
       .then((response) => {
-        let respostaComNomePaises = response.data.map((item) => {
-          return {...item, nomePais: this.state.dadosPaises.find((el) => el.idPais == item.idPais).nomePais}
-        });
         if (response){
+          let respostaComNomePaises = response.data.map((item) => {
+            return {...item, nomePais: this.state.dadosPaises.find((el) => el.idPais == item.idPais).nomePais}
+          });
+
+          let datasets = []
+          let labels = []
+          let cor = RgbHelper.getRandomColor();
+          if (this.state.filtros.idPaises){ 
+            this.state.filtros.idPaises.forEach((el) => {
+
+              let corAnterior = cor;
+              cor = RgbHelper.getRandomColor();
+              if (corAnterior == cor)
+                cor = RgbHelper.getRandomColor();
+
+              let dadosPais = respostaComNomePaises.filter((pais) => pais.idPais == el);
+              
+              if (labels.length == 0)
+                labels = dadosPais.map((el) => el.Ano);
+
+              if (dadosPais && dadosPais.length > 0){
+                let dadosDataset = {
+                  label: 'CO2 - ' + dadosPais[0].nomePais,
+                  backgroundColor: cor,
+                  borderColor: cor,
+                  data: dadosPais.map((elPais) => elPais.emissaoCo2),
+                  yAxisID: 'yCo2'
+                };
+                datasets.push(dadosDataset);
+
+                dadosDataset = {
+                  label: 'CO2 - Per Capita ' + dadosPais[0].nomePais,
+                  backgroundColor: cor,
+                  borderColor: cor,
+                  borderDash: [5, 5],
+                  data: dadosPais.map((elPais) => elPais.emissaoCo2PerCap),
+                  yAxisID: 'yCo2PerCap'
+                  }; 
+                datasets.push(dadosDataset);
+              }
+            });
+          }
+
           this.setState(prevState => ({
             ...prevState,
             data : {
-              labels: respostaComNomePaises.map((el) => el.Ano),
-              datasets: [
+              //labels: respostaComNomePaises.map((el) => el.Ano),
+              labels: labels,
+             /* datasets: [
                 {
-                  label: 'PIB',
+                  label: 'CO2',
                   backgroundColor: 'rgba(194, 116, 161, 0.5)',
                   borderColor: 'rgb(194, 116, 161)',
-                  data: respostaComNomePaises.map((el) => el.pibTotal),
+                  data: respostaComNomePaises.map((el) => el.emissaoCo2),
                   yAxisID: 'yCo2',
                 },
                 {
-                  label: 'PIB Per Capita',
+                  label: 'CO2 Per Capita',
                   backgroundColor: 'rgba(71, 225, 167, 0.5)',
                   borderColor: 'rgb(71, 225, 167)',
-                  data: respostaComNomePaises.map((el) => el.pibPerCapita),
-                  yAxisID: 'yCo2PerCapita',
+                  data: respostaComNomePaises.map((el) => el.emissaoCo2PerCap),
+                  yAxisID: 'yCo2PerCap',
     
                 },
-              ]
+              ]*/
+              datasets: datasets
             },
             dadosGrafico : respostaComNomePaises,
             filtros : {
@@ -206,6 +250,7 @@ export default class Co2 extends Component{
         }
       })
       .catch((error) => {
+        console.log(error);
         let httpServiceHandler = new HttpServiceHandler();
         httpServiceHandler.validarExceptionHTTP(error.response,this);
       })
@@ -257,7 +302,7 @@ export default class Co2 extends Component{
           paginacaoRequest : {
             ...prevState.filtros.paginacaoRequest,
             page : 1,
-            size : this.checkGerarGrafico(idPaises)? 1000 : 50
+            size : this.checkGerarGrafico(idPaises)? 1000000 : default_itens_pagina
           }
           }
         }
@@ -267,7 +312,7 @@ export default class Co2 extends Component{
 
 
     this.checkGerarGrafico = (idPaises) => {
-      return (idPaises) && (idPaises.length == 1);
+      return (idPaises) && (idPaises.length >= 1 && idPaises.length < 6);
     }
 
     this.handleChangeCheckedSelect = (e) => {
@@ -430,7 +475,7 @@ export default class Co2 extends Component{
           </Row>
 
           <br></br>
-          <h5>Busque por somente um país para ver o gráfico </h5>
+          <h5>Busque de um até cinco países para ver o gráfico </h5>
           </Col>
 
           {
@@ -443,7 +488,7 @@ export default class Co2 extends Component{
 
           <Row style={{marginTop : "60px"}}>
             <Col xs={{span: 12, offset: 0}} sm={{span : 12, offset: 0}}  md={{span : 12, offset: 0}} lg={{span: 10, offset: 1}}>
-              <h4>Dados de PIB Cadastrados </h4>
+              <h4>Dados de CO2 Cadastrados </h4>
               <Table responsive="sm" striped bordered hover>
                 <thead>
                   <tr>
