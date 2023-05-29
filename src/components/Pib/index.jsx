@@ -208,13 +208,6 @@ export default class Pib extends Component{
       .catch((error) => {
         let httpServiceHandler = new HttpServiceHandler();
         httpServiceHandler.validarExceptionHTTP(error.response,this);
-
-        if (error.response.status == 404){
-          this.setState(prevState => ({
-            ...prevState,
-            dadosGrafico : []
-          }));
-        }
       })
       //this.limparFiltros();
     }
@@ -239,13 +232,6 @@ export default class Pib extends Component{
         console.log('obterPaisesErro');
         let httpServiceHandler = new HttpServiceHandler();
         httpServiceHandler.validarExceptionHTTP(error.response,this);
-
-        if (error.response.status == 404){
-          this.setState(prevState => ({
-            ...prevState,
-            dadosPaises : []
-          }));
-        }
       })
       this.limparFiltros();
     }

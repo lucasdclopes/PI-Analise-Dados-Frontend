@@ -9,6 +9,18 @@ export default class HttpServiceHandler  extends Component {
 
       let mensagemErro = '';
 
+      if (!response){
+        origemErro.setState( prevState => ({
+          erroModal : {
+            ...prevState.erroModal,
+            mensagemErro : 'Não foi possível conectar ao servidor de dados, verifique sua conexão de rede e se o servidor foi inicializado.',
+            show : true,
+            titulo : 'Erro de Conexão'
+          }
+        }));
+        return;
+      }
+
       if (response.status == 422){
         response.data.forEach((erro) => {          
           mensagemErro += (erro.campo ? erro.campo + ' - ' : '') + erro.mensagemErro + "; ";
@@ -17,8 +29,6 @@ export default class HttpServiceHandler  extends Component {
       else {
         mensagemErro = response.data.mensagemErro;
       }
-
-      
 
       origemErro.setState( prevState => ({
         erroModal : {

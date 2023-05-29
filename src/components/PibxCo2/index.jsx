@@ -205,12 +205,6 @@ export default class PibxCo2 extends Component{
       .catch((error) => {
         let httpServiceHandler = new HttpServiceHandler();
         httpServiceHandler.validarExceptionHTTP(error.response,this);
-        if (error.response.status == 404){
-          this.setState(prevState => ({
-            ...prevState,
-            dadosGrafico : []
-          }));
-        }
       })
       //this.limparFiltros();
     }
@@ -234,13 +228,6 @@ export default class PibxCo2 extends Component{
         console.log('obterPaisesErro');
         let httpServiceHandler = new HttpServiceHandler();
         httpServiceHandler.validarExceptionHTTP(error.response,this);
-
-        if (error.response.status == 404){
-          this.setState(prevState => ({
-            ...prevState,
-            dadosPaises : []
-          }));
-        }
       })
       this.limparFiltros();
     }
@@ -477,9 +464,9 @@ export default class PibxCo2 extends Component{
                       <th>Pib Per Capita - USD</th>
                       <th>Pib Per Capita (máximo)</th>
                       <th>Pib Per Capita (mínimo)</th>
-                      <th>Emissão CO2 {this.state.isCo2PerCapita? "Per Capita":""} - toneladas</th>
-                      <th>Emissão CO2 {this.state.isCo2PerCapita? "Per Capita":""} (máximo)</th>
-                      <th>Emissão CO2 {this.state.isCo2PerCapita? "Per Capita":""} (mínimo)</th>
+                      <th>Emissão CO2 {this.state.filtros.isCo2PerCapita? "Per Capita":""} - toneladas</th>
+                      <th>Emissão CO2 {this.state.filtros.isCo2PerCapita? "Per Capita":""} (máximo)</th>
+                      <th>Emissão CO2 {this.state.filtros.isCo2PerCapita? "Per Capita":""} (mínimo)</th>
                   </tr>
                 </thead>
 
