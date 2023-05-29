@@ -12,6 +12,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import Pib from './components/Pib';
+import Co2 from './components/Co2';
 import PibxCo2 from './components/PibxCo2';
 
 
@@ -21,6 +22,7 @@ ReactDOM.render(
     <Routes>
       <Route path="/" element={<App />}></Route>
       <Route path="/pib" element={<Pib />}></Route>
+      <Route path="/co2" element={<Co2 />}></Route>
       <Route path="/pib-x-co2" element={<PibxCo2 />}></Route>
     </Routes>
 

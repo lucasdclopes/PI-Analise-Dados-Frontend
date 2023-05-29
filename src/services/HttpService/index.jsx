@@ -82,6 +82,38 @@ export default class HttpService{
     return response;
   }
 
+  static listarCo2Paises = async (filtros) => {
+    console.log('filtros listarCo2Paises',filtros);
+    let url = urlBase + '/co2';
+    let queryParams = [];
+
+    if (filtros.idPaises) {
+      filtros.idPaises.forEach((idPais) => {
+        queryParams.push('idPais=' + idPais);
+      })
+    }
+
+    if (filtros.minAno) {
+      queryParams.push('minAno=' + filtros.minAno);
+    }
+    if (filtros.maxAno) {
+      queryParams.push('maxAno=' + filtros.maxAno);
+    }
+
+    if (filtros.paginacaoRequest) {
+      queryParams.push(HttpService.queryPaginacao(
+        filtros.paginacaoRequest
+        ));
+    }
+
+    url += HttpService.gerarParams(queryParams);
+
+    console.log("url listarCo2Paises ",url);
+
+    let response = await axios.get(url,defaultConfig);
+    return response;
+  }
+
   static calcularPibCo2Paises = async (filtros) => {
     console.log('filtros calcularPibCo2Paises',filtros);
     let url = urlBase + '/pib/calc-co2';
