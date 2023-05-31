@@ -1,6 +1,10 @@
-# Getting Started with Create React App
+# React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este projeto foi criado utilizando o React [Create React App](https://github.com/facebook/create-react-app).
+
+## Sobre
+
+Este projeto é do PI (Projeto Integrador ) do curso de Engenheria de Computação da Univesp. O principal tema é análise de dados.
 
 ## Requisitos
 
