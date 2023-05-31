@@ -4,7 +4,7 @@ Este projeto foi criado utilizando o React [Create React App](https://github.com
 
 ## Sobre
 
-Este projeto é do PI (Projeto Integrador ) do curso de Engenheria de Computação da Univesp. O principal tema é análise de dados.
+Este projeto é do PI (Projeto Integrador ) do curso de Engenheria de Computação da Univesp. O principal tema é análise de dados utilizando datasets públicos
 
 ## Requisitos
 
